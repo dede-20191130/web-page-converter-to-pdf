@@ -10,6 +10,10 @@ import fetch, { RequestInfo, RequestInit, Response } from "node-fetch";
 import { getParsedAsStream } from "@util/file-operation/csv/get-parsed-as-stream";
 import { Readable, Writable } from "stream";
 import { parse } from 'csv-parse';
+// @ts-ignore
+import { loggerMock } from '../logging';
+// @ts-ignore
+import { mockWS } from '@util/file-operation/csv/write-into-csv';
 
 interface fetchFunc {
     (
@@ -29,10 +33,13 @@ Disallow: /*/grape
 const txtListRequiredChecked = `https://example-robots/foo
 https://example-robots/apple
 https://example-robots/lemon/juice
-https://example-robots/hokkaido/grape
-`
+https://example-robots/hokkaido/grape`
+
 let globFlag: "dir-for-missing" | "correct-dir";
 let firstLine: "invalid-robots-url" | "https://example-not-found" | "https://example-robots" | "empty";
+
+jest.mock("../logging");
+jest.mock("@util/file-operation/csv/write-into-csv");
 
 jest.mock("node-fetch", () => {
     return {
@@ -89,50 +96,12 @@ jest.mock("@util/file-operation/common/get-first-line", () => {
 
 });
 
-let loggerMock = {
-    info: jest.fn<void, Parameters<LeveledLogMethod>>(),
-    error: jest.fn<void, Parameters<LeveledLogMethod>>(),
-}
-jest.mock("../logging", () => {
-    return {
-        __esModule: true,
-        getLogger: jest.fn().mockImplementation(() => loggerMock)
-    }
-
-})
-
 jest.mock("@util/file-operation/csv/get-parsed-as-stream", () => {
     return {
         __esModule: true,
         ...jest.requireActual("@util/file-operation/csv/get-parsed-as-stream"),
-        getParsedAsStream: (jest.fn() as jest.MockedFunction<typeof getParsedAsStream>).mockImplementation(async (...args) => {
+        getParsedAsStream: (jest.fn() as jest.MockedFunction<typeof getParsedAsStream>).mockImplementation((...args) => {
             return Readable.from(txtListRequiredChecked).pipe(parse());
-        })
-    }
-
-});
-
-class MockWriteStream extends Writable {
-    private stored: string[][] = [];
-
-    write(chunk: unknown, encoding?: unknown, callback?: unknown): boolean {
-        this.stored.push((chunk + "").replace(/\n$/,"").split(","));
-        return true;
-    }
-
-    expose() {
-        return this.stored;
-    }
-
-
-}
-const mockWS = new MockWriteStream();
-jest.mock("@util/file-operation/csv/write-into-csv", () => {
-    return {
-        __esModule: true,
-        ...jest.requireActual("@util/file-operation/csv/write-into-csv"),
-        getWSIntoCsv: jest.fn<Writable, any>().mockImplementation((...args) => {
-            return mockWS;
         })
     }
 

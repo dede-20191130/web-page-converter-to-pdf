@@ -61,7 +61,7 @@ export async function checkRobots(): Promise<Boolean> {
     }
 
     const tgtRobot = robotsParser(robotsTxtUrl, robotsTxt);
-    const csvParser = await getParsedAsStream(tgtCsvPath);
+    const csvParser = getParsedAsStream(tgtCsvPath);
     const csvStringifier = getStringifier();
     const csvWriter = getWSIntoCsv(outputRobotsCsvDirPath, "robots-output.csv");
     csvStringifier.pipe(csvWriter);
