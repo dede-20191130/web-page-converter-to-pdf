@@ -84,8 +84,12 @@ it('should detect input file is missing and terminate the process ', async () =>
 
 describe('filtering the url list correctly', () => {
 
+beforeAll(() => {
+    jest.mocked(Glob.globFirstFilePathOfTgtExt).mockReturnValue("Not-empty-file-path");
+    
+});
+
     beforeEach(() => {
-        jest.mocked(Glob.globFirstFilePathOfTgtExt).mockReturnValueOnce("Not-empty-file-path");
 mockWS.erase();
     });
 
