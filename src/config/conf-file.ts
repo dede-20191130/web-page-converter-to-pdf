@@ -1,26 +1,44 @@
 import path from "path";
-const projectRootPath = path.resolve(__dirname, "../..");
+export const projectRootPath = path.resolve(__dirname, "../..");
 
 export type outputRobotsCsvRow = [string, "OK" | "NG"];
 export type outputResultOfScrapingRow = [...outputRobotsCsvRow, string];
 export type outputRobotsCsvFormat = outputRobotsCsvRow[];
 export type outputResultOfScrapingFormat = outputResultOfScrapingRow[];
 
-export const inputCsvDirPath = path.join(projectRootPath, "file/input");
+const inputCsvDirRelPath = "file/input";
+export const inputCsvDirPath = path.join(projectRootPath, inputCsvDirRelPath);
+const outputRobotsCsvDirRelPath = "file/output-robots";
 export const outputRobotsCsvDirPath = path.join(
     projectRootPath,
-    "file/output-robots"
+    outputRobotsCsvDirRelPath
 );
+const outputPickedTargetCsvDirRelPath = "file/output-picked-target";
 export const outputPickedTargetCsvDirPath = path.join(
     projectRootPath,
-    "file/output-picked-target"
+    outputPickedTargetCsvDirRelPath
 );
+const outputResultOfScrapingDirRelPath = "file/output-result-of-scraping";
 export const outputResultOfScrapingDirPath = path.join(
     projectRootPath,
-    "file/output-result-of-scraping"
+    outputResultOfScrapingDirRelPath
 );
-export const createdPdfDirPath = path.join(projectRootPath, "file/created-pdf");
+const createdPdfDirRelPath = "file/created-pdf";
+export const createdPdfDirPath = path.join(
+    projectRootPath,
+    createdPdfDirRelPath
+);
+const outputResultOfCheckingPdfSanityRel = "file/output-result-of-pdf-sanity";
 export const outputResultOfCheckingPdfSanity = path.join(
     projectRootPath,
-    "file/output-result-of-pdf-sanity"
+    outputResultOfCheckingPdfSanityRel
 );
+
+export const dirPathsHavingStale: string[] = [
+    inputCsvDirRelPath,
+    outputRobotsCsvDirRelPath,
+    outputPickedTargetCsvDirRelPath,
+    outputResultOfScrapingDirRelPath,
+    createdPdfDirRelPath,
+    outputResultOfCheckingPdfSanityRel,
+];
