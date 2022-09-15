@@ -36,6 +36,7 @@ export async function createPdf(): Promise<boolean> {
         browser = await launch();
         const csvParser = getParsedAsStream(tgtCsvPath);
         const transformer = transform<outputRobotsCsvRow, unknown>(
+            { parallel: 3 },
             async (
                 record,
                 callback: HandlerCallback<outputResultOfScrapingRow>

@@ -55,7 +55,7 @@ export async function scrapeAndSave(
             throw e;
         }
     } finally {
-        if (page) page.close();
+        if (page) await page.close();
     }
     return "CREATE-PDF-SUCCESSFULLY";
 }

@@ -2,9 +2,12 @@ import { inputCsvDirPath, outputRobotsCsvDirPath } from "@config/conf-file";
 import { getFirstLine } from "@util/file-operation/common/get-first-line";
 import { globFirstFilePathOfTgtExt } from "@util/file-operation/common/glob";
 import { getLogger } from "./logging";
-import fetch, { FetchError } from 'node-fetch';
+import fetch, { FetchError } from "node-fetch";
 import robotsParser, { Robot } from "robots-parser";
-import { getParsedAsStream, getStringifier } from "@util/file-operation/csv/get-parsed-as-stream";
+import {
+    getParsedAsStream,
+    getStringifier,
+} from "@util/file-operation/csv/get-parsed-as-stream";
 import { getWSIntoCsv } from "@util/file-operation/csv/write-into-csv";
 import { finished } from "stream/promises";
 
@@ -44,10 +47,15 @@ export async function checkRobots(): Promise<Boolean> {
         if (error instanceof Error) {
             if (error instanceof TypeError) {
                 getLogger().info("Target CSV does not contain valid URL.");
-            } else if (error.name === 'AbortError' || error instanceof FetchError) {
-                getLogger().error("Robots.txt of URL %s access failed.", (robotsTxtUrl ? robotsTxtUrl : ""));
-            }
-            else {
+            } else if (
+                error.name === "AbortError" ||
+                error instanceof FetchError
+            ) {
+                getLogger().error(
+                    "Robots.txt of URL %s access failed.",
+                    robotsTxtUrl ? robotsTxtUrl : ""
+                );
+            } else {
                 throw error;
             }
             return false;
@@ -71,7 +79,7 @@ export async function checkRobots(): Promise<Boolean> {
         const checkedRecord = await checkOneRecord(record, tgtRobot);
         csvStringifier.write(checkedRecord);
     }
-    csvWriter.end();
+    csvStringifier.end();
 
     await finished(csvWriter);
 
